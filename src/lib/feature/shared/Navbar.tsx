@@ -42,11 +42,11 @@ export const Navbar = () => {
         <div className="flex gap-20 items-center">
           <div className="hidden md:block">
             <div className="flex gap-12 ">
-              <p className="text-gray-700 font-semibold">OUR STORY</p>
-              <p className="text-gray-700 font-semibold">OUR BREADCRUMBS</p>
-              <p className="text-gray-700 font-semibold">SHOP</p>
-              <p className="text-gray-700 font-semibold">RECEIPES</p>
-              <p className="text-gray-700 font-semibold">STOCKISTS</p>
+              <p className="text-primary font-semibold">OUR STORY</p>
+              <p className="text-primary font-semibold">OUR BREADCRUMBS</p>
+              <p className="text-primary font-semibold">SHOP</p>
+              <p className="text-primary font-semibold">RECEIPES</p>
+              <p className="text-primary font-semibold">STOCKISTS</p>
             </div>
           </div>
         </div>
