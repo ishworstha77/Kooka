@@ -13,7 +13,7 @@ import Autoplay from "embla-carousel-autoplay";
 function AutoPlayCarousel() {
   return (
     <Carousel
-      className="w-1/2"
+      className="w-5/6"
       plugins={[
         Autoplay({
           delay: 2000,
@@ -21,16 +21,19 @@ function AutoPlayCarousel() {
       ]}
     >
       <CarouselContent>
-        {[1, 2, 3, 4, 5, 6]?.map((item) => (
+        {[1, 2, 3, 4, 5, 6, 7, 8]?.map((item) => (
           <CarouselItem key={item}>
             {" "}
-            <Image
-              className="w-600 h-600"
-              src={`/breadcrumb/breadcrumb${item}.jpg`}
-              alt="breadcrumb1"
-              width="600"
-              height="600"
-            />
+            <div className="relative h-[300px] w-full object-cover">
+              <Image
+                className="object-cover"
+                src={`/breadcrumb/breadcrumb${item}.png`}
+                alt="breadcrumb1"
+                fill
+                // width="1000"
+                // height=""
+              />
+            </div>
           </CarouselItem>
         ))}
       </CarouselContent>
