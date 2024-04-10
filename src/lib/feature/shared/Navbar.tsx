@@ -1,3 +1,4 @@
+// "use client";
 import Image from "next/image";
 import { ChevronDown, Menu, ShoppingCart } from "lucide-react";
 import {
@@ -8,8 +9,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import { authOptions } from "@/lib/auth";
+import { getServerSession } from "next-auth";
+import { signOut } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { SignoutButton } from "./SignoutButton";
 
-export const Navbar = () => {
+export const Navbar = async () => {
+  const session = await getServerSession(authOptions);
   return (
     <div className="flex flex-col gap-8">
       <div className="flex w-full gap-4">
@@ -48,6 +55,7 @@ export const Navbar = () => {
             </DropdownMenu>
           </div>
         </div>
+        {session?.user ? <SignoutButton /> : <Link href="/login">Sign In</Link>}
       </div>
       <div className="flex justify-center">
         <div className="flex gap-20 items-center">

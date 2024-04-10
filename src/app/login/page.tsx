@@ -1,3 +1,5 @@
+"use client";
+
 import { useFormState, useFormStatus } from "react-dom";
 // import { authenticate } from '@/app/lib/actions';
 import Image from "next/image";
@@ -6,8 +8,30 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useState } from "react";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 const Dashboard = () => {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const loginHandler = async () => {
+    const loginData = await signIn("credentials", {
+      email: email,
+      password: password,
+      redirect: false,
+    });
+
+    if (loginData?.error) {
+      console.log(loginData?.error);
+    } else {
+      router?.push("/");
+      router.refresh();
+    }
+  };
+
   return (
     <div className="w-full lg:grid lg:min-h-[600px] lg:grid-cols-2 xl:min-h-[800px]">
       <div className="flex items-center justify-center py-12">
@@ -26,6 +50,7 @@ const Dashboard = () => {
                 type="email"
                 placeholder="m@example.com"
                 required
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             <div className="grid gap-2">
@@ -38,9 +63,14 @@ const Dashboard = () => {
                   Forgot your password?
                 </Link>
               </div>
-              <Input id="password" type="password" required />
+              <Input
+                id="password"
+                type="password"
+                required
+                onChange={(e) => setPassword(e.target.value)}
+              />
             </div>
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" onClick={loginHandler}>
               Login
             </Button>
             <Button variant="outline" className="w-full">

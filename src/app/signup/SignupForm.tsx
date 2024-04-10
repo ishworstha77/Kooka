@@ -6,6 +6,7 @@ type Props = {
 };
 
 const SignUpForm = ({ email, customerId }: Props) => {
+  console.log("hello", !!email);
   return (
     <form
       className="flex flex-col gap-2"
