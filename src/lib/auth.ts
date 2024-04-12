@@ -1,4 +1,5 @@
 import { PrismaAdapter } from '@next-auth/prisma-adapter';
+import { User } from '@prisma/client';
 import { compare } from "bcrypt";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
@@ -40,25 +41,36 @@ export const authOptions: NextAuthOptions = {
             }
 
             return {
-                id: `${existingUser}`,
+                id: `${existingUser?.id}`,
                 name: existingUser?.name,
-                email: existingUser?.email
+                email: existingUser?.email,
             }
           }
         })
     ],
     callbacks: {
-        async jwt({token}){
+        async jwt({token, user}){
+            if(user){
+                const u = user as unknown as User
+                return {
+                    ...token,
+                    id: u?.id,
+                    name: u?.name,
+                    email: u?.email,
+                } 
+            }
             return token
         },
+  
         async session({session, token}){
             return {
                 ...session,
                 user: {
-                    ...session.user,
-                    username: token.name
+                    ...session?.user,
+                    id: token?.id,
                 }
             }
-        }
+        },
+      
     }
 }
