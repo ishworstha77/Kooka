@@ -37,7 +37,7 @@ export async function POST(req: Request) {
     }
 }
 
-export async function GET(res: Response) {
+export async function GET() {
     const session = await getServerSession();
 
     if (!session?.user) {
