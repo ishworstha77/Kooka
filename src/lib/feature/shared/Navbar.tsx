@@ -16,7 +16,6 @@ import { SignoutButton } from "./SignoutButton";
 
 export const Navbar = async () => {
   const session = await getServerSession(authOptions);
-  console.log("hello", session);
   return (
     <div className="flex flex-col gap-8">
       <div className="flex w-full gap-4">
@@ -45,12 +44,17 @@ export const Navbar = async () => {
                 <DropdownMenuItem>
                   <Link href="/our-breadcrumb">OUR BREADCRUMBS</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>SHOP</DropdownMenuItem>
+                <DropdownMenuItem>
+                  <Link href="/shop">SHOP</Link>
+                </DropdownMenuItem>
                 <DropdownMenuItem>
                   {" "}
                   <Link href="/recipes">RECEIPES</Link>
                 </DropdownMenuItem>
-                <DropdownMenuItem>STOCKISTS</DropdownMenuItem>
+                <DropdownMenuItem>
+                  {" "}
+                  <Link href="/recipes">STOCKISTS</Link>
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
@@ -67,11 +71,15 @@ export const Navbar = async () => {
               <Link href="/our-breadcrumb">
                 <p className="text-primary font-semibold">OUR BREADCRUMBS</p>
               </Link>
-              <p className="text-primary font-semibold">SHOP</p>
+              <Link href="/shop">
+                <p className="text-primary font-semibold">SHOP</p>
+              </Link>
               <Link href="/recipes">
                 <p className="text-primary font-semibold">RECEIPES</p>
               </Link>
-              <p className="text-primary font-semibold">STOCKISTS</p>
+              <Link href="/stocklist">
+                <p className="text-primary font-semibold">STOCKISTS</p>
+              </Link>
             </div>
           </div>
         </div>
