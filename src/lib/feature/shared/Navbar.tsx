@@ -16,6 +16,7 @@ import { SignoutButton } from "./SignoutButton";
 
 export const Navbar = async () => {
   const session = await getServerSession(authOptions);
+  console.log("hello", session);
   return (
     <div className="flex flex-col gap-8">
       <div className="flex w-full gap-4">
