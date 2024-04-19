@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { File, ListFilter, MoreHorizontal } from "lucide-react";
-import AddProductModal from "../product/AddProductModal";
+
 import {
   Card,
   CardContent,
@@ -33,24 +33,29 @@ import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { QueryKey, useQuery } from "@tanstack/react-query";
+import AddProductModal from "./AddProductModal";
+
+interface ProductData {
+  id: number;
+  name: string;
+  description: string;
+  createdAt: string;
+  price: number;
+}
 
 export const DashboardTable = () => {
-  const [data, setData] = useState<
-    {
-      id: number;
-      name: string;
-      description: string;
-      createdAt: string;
-      price: number;
-    }[]
-  >();
   const getProducts = async () => {
     const response = await axios.get("/api/product");
-    setData(response?.data);
+    return response;
   };
-  useEffect(() => {
-    getProducts();
-  }, []);
+
+  const {
+    data: productData,
+    isLoading,
+    refetch,
+  } = useQuery({ queryKey: ["getProducts"], queryFn: getProducts });
+
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
       <Tabs defaultValue="all">
@@ -122,7 +127,7 @@ export const DashboardTable = () => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data?.map?.((item) => (
+                  {productData?.data?.map?.((item: ProductData) => (
                     <TableRow key={item?.id}>
                       <TableCell className="hidden sm:table-cell">
                         <Image

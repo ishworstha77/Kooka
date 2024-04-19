@@ -27,7 +27,7 @@ const Dashboard = () => {
     if (loginData?.error) {
       console.log(loginData?.error);
     } else {
-      router?.push("/");
+      router?.push("/admin");
       router.refresh();
     }
   };
@@ -70,7 +70,11 @@ const Dashboard = () => {
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <Button type="submit" className="w-full" onClick={loginHandler}>
+            <Button
+              type="submit"
+              className="w-full hover:bg-black"
+              onClick={loginHandler}
+            >
               Login
             </Button>
             <Button variant="outline" className="w-full">

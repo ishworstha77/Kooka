@@ -15,9 +15,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { PlusCircle } from "lucide-react";
 import axios from "axios";
 import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const AddProductModal = () => {
   const [open, setOpen] = useState(false);
+  const queryClient = useQueryClient();
   const {
     register,
     handleSubmit,
@@ -25,12 +27,29 @@ export const AddProductModal = () => {
     formState: { errors },
   } = useForm();
 
+  const addProject = async (data: any) => {
+    const res = await axios.post(`/api/product`, data);
+    return res;
+  };
+
+  const { mutate } = useMutation({
+    mutationFn: addProject,
+
+    onSuccess: (data) => {
+      setOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["getProducts"] });
+      // Perform actions upon successful mutation
+    },
+    onError: (error) => {
+      console.error("Mutation error:", error);
+    },
+  });
+
   const onSubmit = async () => {
-    const response = await axios.post("/api/product", {
+    mutate({
       ...getValues(),
       price: Number(getValues()?.price),
     });
-    setOpen(false);
   };
 
   return (

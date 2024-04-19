@@ -3,7 +3,8 @@ import "./globals.css";
 
 import { Poppins, Roboto_Mono } from "next/font/google";
 import Link from "next/link";
-import { Provider } from "./provider";
+import { AuthProvider } from "./authProvider";
+import QueryClientProviders from "./queryClientProvider";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -31,7 +32,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${roboto_mono.variable}`}>
       <body>
-        <Provider>{children}</Provider>
+        <QueryClientProviders>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryClientProviders>
       </body>
     </html>
   );
