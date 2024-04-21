@@ -42,6 +42,9 @@ interface ProductData {
   description: string;
   createdAt: string;
   price: number;
+  totalSales: number;
+  isActive: boolean;
+  image: string;
 }
 
 export const DashboardTable = () => {
@@ -134,7 +137,7 @@ export const DashboardTable = () => {
                           alt="Product image"
                           className="aspect-square rounded-md object-cover"
                           height="64"
-                          src="/placeholder.svg"
+                          src={item?.image || ""}
                           width="64"
                         />
                       </TableCell>
@@ -142,10 +145,14 @@ export const DashboardTable = () => {
                         {item?.name}
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline">Draft</Badge>
+                        <Badge variant="outline">
+                          {item?.isActive ? "Active" : "Inactive"}
+                        </Badge>
                       </TableCell>
                       <TableCell>${item?.price}</TableCell>
-                      <TableCell className="hidden md:table-cell">25</TableCell>
+                      <TableCell className="hidden md:table-cell">
+                        {item?.totalSales}
+                      </TableCell>
                       <TableCell className="hidden md:table-cell">
                         {item?.createdAt}
                       </TableCell>

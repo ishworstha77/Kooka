@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     try{
         debugger
         const body = await req.json()
-        const {name, description, price} = body
+        const {name, description, price, image} = body
         
         if(!name){
             return NextResponse.json({ message: 'product name compulsory'}, {status: 409})
@@ -27,7 +27,8 @@ export async function POST(req: Request) {
             data: {
                 name,
                 description,
-                price
+                price,
+                image
             }
         })
 

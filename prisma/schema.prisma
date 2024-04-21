@@ -30,4 +30,6 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   isActive    Boolean  @default(true)
+  image       String?
+  totalSales  Int      @default(0)
 }
