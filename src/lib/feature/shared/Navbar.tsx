@@ -1,17 +1,14 @@
 import Image from "next/image";
-import { ChevronDown, Menu, ShoppingCart } from "lucide-react";
+import { Menu, ShoppingCart } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
-import { signOut } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { SignoutButton } from "./SignoutButton";
 
 export const Navbar = async () => {
