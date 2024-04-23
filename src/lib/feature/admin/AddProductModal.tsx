@@ -1,6 +1,7 @@
 "use client";
 
 import { useForm, SubmitHandler } from "react-hook-form";
+import debounce from "lodash/debounce";
 import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import {
@@ -75,6 +76,7 @@ export const AddProductModal = () => {
       price: Number(getValues()?.price),
     });
   };
+  const onSubmitDebounced = debounce(onSubmit, 2000);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -92,7 +94,7 @@ export const AddProductModal = () => {
         <DialogHeader>
           <DialogTitle>Add Product</DialogTitle>
           <DialogDescription>
-            <form onSubmit={handleSubmit(onSubmit)}>
+            <form onSubmit={handleSubmit(onSubmitDebounced)}>
               <div className="flex flex-col gap-4 mt-8">
                 <div className="flex flex-col gap-1">
                   <p>Enter product name</p>
