@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const router = useRouter();

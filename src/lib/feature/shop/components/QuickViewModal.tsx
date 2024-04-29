@@ -8,16 +8,30 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ProductData } from "@/utils/apiFunctions";
+import { ProductData, setProjectView } from "@/utils/apiFunctions";
+import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useEffect } from "react";
 
 export const QuickViewModal = (props: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   selectedItem: ProductData;
 }) => {
+  console.log("hello");
   const { open, setOpen, selectedItem } = props;
+
+  const { mutate } = useMutation({
+    mutationFn: setProjectView,
+  });
+
+  useEffect(() => {
+    if (selectedItem?.id) {
+      mutate({
+        productId: selectedItem?.id,
+      });
+    }
+  }, [selectedItem?.id]);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

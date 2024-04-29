@@ -5,6 +5,7 @@ import { Poppins, Roboto_Mono } from "next/font/google";
 import Link from "next/link";
 import { AuthProvider } from "./authProvider";
 import QueryClientProviders from "./queryClientProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const poppins = Poppins({
   weight: ["100", "200", "300", "400", "500", "600", "700", "800", "900"],
@@ -34,6 +35,7 @@ export default function RootLayout({
       <body>
         <QueryClientProviders>
           <AuthProvider>{children}</AuthProvider>
+          <Toaster />
         </QueryClientProviders>
       </body>
     </html>

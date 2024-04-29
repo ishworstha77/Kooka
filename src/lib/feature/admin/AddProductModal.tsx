@@ -19,11 +19,14 @@ import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useToast } from "@/components/ui/use-toast";
+import { ProductAddData, addProject } from "@/utils/apiFunctions";
 
 export const AddProductModal = () => {
   const bucket = "images";
   const [image, setImage] = useState("");
   const supabase = createClientComponentClient();
+  const { toast } = useToast();
 
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
@@ -34,11 +37,6 @@ export const AddProductModal = () => {
     formState: { errors },
   } = useForm();
 
-  const addProject = async (data: any) => {
-    const res = await axios.post(`/api/product`, data);
-    return res;
-  };
-
   const { mutate } = useMutation({
     mutationFn: addProject,
 
@@ -47,8 +45,12 @@ export const AddProductModal = () => {
       queryClient.invalidateQueries({ queryKey: ["getProducts"] });
       // Perform actions upon successful mutation
     },
-    onError: (error) => {
-      console.error("Mutation error:", error);
+    onError: (error: { response: { data: { message: string } } }) => {
+      const errorMessage = error?.response?.data?.message;
+      toast({
+        title: "Error",
+        description: errorMessage,
+      });
     },
   });
 
@@ -73,8 +75,7 @@ export const AddProductModal = () => {
     mutate({
       ...getValues(),
       image: image,
-      price: Number(getValues()?.price),
-    });
+    } as ProductAddData);
   };
   const onSubmitDebounced = debounce(onSubmit, 2000);
 

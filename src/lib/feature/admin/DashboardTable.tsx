@@ -35,6 +35,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { QueryKey, useQuery } from "@tanstack/react-query";
 import AddProductModal from "./AddProductModal";
+import { getProducts } from "@/utils/apiFunctions";
 
 interface ProductData {
   id: number;
@@ -48,11 +49,6 @@ interface ProductData {
 }
 
 export const DashboardTable = () => {
-  const getProducts = async () => {
-    const response = await axios.get("/api/product");
-    return response;
-  };
-
   const {
     data: productData,
     isLoading,
