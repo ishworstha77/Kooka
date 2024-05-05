@@ -45,7 +45,7 @@ interface ProductData {
   price: number;
   totalSales: number;
   isActive: boolean;
-  image: string;
+  images: string[];
 }
 
 export const DashboardTable = () => {
@@ -133,7 +133,7 @@ export const DashboardTable = () => {
                           alt="Product image"
                           className="aspect-square rounded-md object-cover"
                           height="64"
-                          src={item?.image || ""}
+                          src={item?.images?.[0] || ""}
                           width="64"
                         />
                       </TableCell>

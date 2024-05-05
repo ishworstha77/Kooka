@@ -8,14 +8,14 @@ export interface ProductData {
     price: number;
     totalSales: number;
     isActive: boolean;
-    image: string;
+    images: string[];
 }
 
 export interface ProductAddData {
   name: string; 
   description: string; 
   price: string; 
-  image: string
+  images: string[]
 }
 
 export interface ProductView{

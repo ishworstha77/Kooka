@@ -55,7 +55,7 @@ export const QuickViewModal = (props: {
                 <p>View Full Item</p>
               </div>
               <Image
-                src={selectedItem?.image}
+                src={selectedItem?.images?.[0]}
                 alt={selectedItem?.name}
                 width={1000}
                 height={1000}
