@@ -1,4 +1,6 @@
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
+import { getServerSession } from "next-auth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -28,7 +30,7 @@ export async function POST(req: NextRequest) {
                 where: {
                     productId: parseInt(productId),
                 },
-                data: {
+                data: { 
                     noOfViews: {
                     increment: 1,
                     },
@@ -40,4 +42,26 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({message: 'Something went wrong!!'},{status: 500})
     }
     
-  }
+}
+
+export async function GET(req: NextRequest) {
+    const session = await getServerSession(authOptions)
+
+    if(!session?.user) {
+        return NextResponse.json({message: 'User not authenticated'},{status: 401})
+    }
+    try {
+        const productView = await prisma.productView.findMany({
+            include: {
+                product: true
+            }
+        });
+        return NextResponse.json(productView,{status: 200})
+    } catch (error) {
+        return NextResponse.json({message: 'Something went wrong'},{status: 500})
+
+    }
+}
+
+
+

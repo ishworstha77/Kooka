@@ -22,9 +22,14 @@ export interface ProductView{
   productId: number
 }
 
+export interface AddCartData {
+  productId: number;
+  quantity: number;
+}
+
 export const getProducts = async () => {
-    const response = await axios.get("/api/product");
-    return response;
+    const res = await axios.get("/api/product");
+    return res;
 };
 
 export const addProject = async (data: ProductAddData) => {
@@ -37,4 +42,20 @@ export const setProjectView = async (data: ProductView) => {
   return res;
 };
 
+export const getProjectView = async () => {
+  const res = await axios.get(`/api/product-view`);
+  return res;
+};
+
+
+export const addToCart = async (data: AddCartData) => {
+  const res = await axios.post(`/api/cart`, data);
+  return res;
+};
+
+
+export const getCart = async () => {
+  const res = await axios.get(`/api/cart`);
+  return res;
+};
 

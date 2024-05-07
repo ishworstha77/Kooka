@@ -8,21 +8,40 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { ProductData, setProjectView } from "@/utils/apiFunctions";
+import { toast } from "@/components/ui/use-toast";
+import { ProductData, addToCart, setProjectView } from "@/utils/apiFunctions";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
-import { Dispatch, SetStateAction, useEffect } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export const QuickViewModal = (props: {
   open: boolean;
   setOpen: Dispatch<SetStateAction<boolean>>;
   selectedItem: ProductData;
 }) => {
-  console.log("hello");
+  const [quantity, setQuantity] = useState(1);
   const { open, setOpen, selectedItem } = props;
 
   const { mutate } = useMutation({
     mutationFn: setProjectView,
+  });
+
+  const { mutate: addToCartMutate } = useMutation({
+    mutationFn: addToCart,
+
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: data?.data?.message,
+      });
+    },
+    onError: (error: { response: { data: { message: string } } }) => {
+      const errorMessage = error?.response?.data?.message;
+      toast({
+        title: "Error",
+        description: errorMessage,
+      });
+    },
   });
 
   useEffect(() => {
@@ -33,33 +52,52 @@ export const QuickViewModal = (props: {
     }
   }, [selectedItem?.id]);
 
+  const addToCartHandler = () => {
+    addToCartMutate({
+      productId: selectedItem?.id,
+      quantity: quantity,
+    });
+  };
+
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogContent>
         <DialogHeader>
           <DialogDescription>
-            <div className="flex gap-4 justify-between">
-              <div className="flex flex-col gap-4">
-                <p>{selectedItem?.name}</p>
-                <p>${selectedItem?.price}</p>
-                <p>{selectedItem?.description}</p>
-                <div className="flex flex-col gap-2">
-                  <p>Quantity</p>
-                  <Input
-                    defaultValue={1}
-                    type="number"
-                    className="w-20 bg-gray-300"
+            <div className="grid grid-cols-1 md:grid-cols-3 grid-flow-row gap-4">
+              <div className="grid col-span-1">
+                <div className="flex flex-col gap-4">
+                  <p>{selectedItem?.name}</p>
+                  <p>${selectedItem?.price}</p>
+                  <p>{selectedItem?.description}</p>
+                  <div className="flex flex-col gap-2">
+                    <p>Quantity</p>
+                    <Input
+                      defaultValue={1}
+                      type="number"
+                      className="w-20 bg-gray-300"
+                      onChange={(e) => setQuantity(Number(e?.target?.value))}
+                    />
+                  </div>
+                  <Button variant="outline" onClick={addToCartHandler}>
+                    Add to cart
+                  </Button>
+                  <p>View Full Item</p>
+                </div>
+              </div>
+              <div className="grid col-span-2">
+                <div className="flex items-center justify-center">
+                  <Image
+                    // className="object-cover"
+                    className="h-52 w-52"
+                    src={selectedItem?.images?.[0]}
+                    alt="breadcrumb1"
+                    // fill
+                    width={500}
+                    height={500}
                   />
                 </div>
-                <Button variant="outline">Add to cart</Button>
-                <p>View Full Item</p>
               </div>
-              <Image
-                src={selectedItem?.images?.[0]}
-                alt={selectedItem?.name}
-                width={1000}
-                height={1000}
-              />
             </div>
           </DialogDescription>
         </DialogHeader>

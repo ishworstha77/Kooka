@@ -34,7 +34,8 @@ import { Badge } from "@/components/ui/badge";
 
 import { useQuery } from "@tanstack/react-query";
 import AddProductModal from "./AddProductModal";
-import { getProducts } from "@/utils/apiFunctions";
+import { getProducts, getProjectView } from "@/utils/apiFunctions";
+import { Product, ProductView } from "@prisma/client";
 
 interface ProductData {
   id: number;
@@ -47,12 +48,12 @@ interface ProductData {
   images: string[];
 }
 
-export const DashboardTable = () => {
-  const {
-    data: productData,
-    isLoading,
-    refetch,
-  } = useQuery({ queryKey: ["getProducts"], queryFn: getProducts });
+export const AnalyticsTable = () => {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["getProductsView"],
+    queryFn: getProjectView,
+  });
+  console.log("hello", data);
 
   if (isLoading) {
     return <>Loading ...</>;
@@ -102,10 +103,8 @@ export const DashboardTable = () => {
         <TabsContent value="all">
           <Card>
             <CardHeader>
-              <CardTitle>Products</CardTitle>
-              <CardDescription>
-                Manage your products and view their sales performance.
-              </CardDescription>
+              <CardTitle>Views</CardTitle>
+              <CardDescription>No of views of products.</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -114,68 +113,41 @@ export const DashboardTable = () => {
                     <TableHead className="hidden w-[100px] sm:table-cell">
                       <span className="sr-only">Image</span>
                     </TableHead>
+                    <TableHead>ID</TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Price</TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Total Sales
-                    </TableHead>
+                    <TableHead>No of views</TableHead>
                     <TableHead className="hidden md:table-cell">
                       Created at
-                    </TableHead>
-                    <TableHead>
-                      <span className="sr-only">Actions</span>
                     </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {productData?.data?.map?.((item: ProductData) => (
-                    <TableRow key={item?.id}>
-                      <TableCell className="hidden sm:table-cell">
-                        <Image
-                          alt="Product image"
-                          className="aspect-square rounded-md object-cover"
-                          height="64"
-                          src={item?.images?.[0] || ""}
-                          width="64"
-                        />
-                      </TableCell>
-                      <TableCell className="font-medium">
-                        {item?.name}
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline">
-                          {item?.isActive ? "Active" : "Inactive"}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>${item?.price}</TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {item?.totalSales}
-                      </TableCell>
-                      <TableCell className="hidden md:table-cell">
-                        {item?.createdAt}
-                      </TableCell>
-                      <TableCell>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              aria-haspopup="true"
-                              size="icon"
-                              variant="ghost"
-                            >
-                              <MoreHorizontal className="h-4 w-4" />
-                              <span className="sr-only">Toggle menu</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {data?.data?.map?.(
+                    (item: ProductView & { product: Product }) => (
+                      <TableRow key={item?.id}>
+                        <TableCell className="hidden sm:table-cell">
+                          <Image
+                            alt="Product image"
+                            className="aspect-square rounded-md object-cover"
+                            height="64"
+                            src={item?.product?.images?.[0] || ""}
+                            width="64"
+                          />
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {item?.product?.id}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {item?.product?.name}
+                        </TableCell>
+
+                        <TableCell>{item?.noOfViews}</TableCell>
+                        <TableCell className="hidden md:table-cell">
+                          {item?.product?.createdAt as unknown as string}
+                        </TableCell>
+                      </TableRow>
+                    )
+                  )}
                 </TableBody>
               </Table>
             </CardContent>

@@ -1,10 +1,10 @@
+import { AnalyticsTable } from "@/lib/feature/admin/AnalyticsTable";
 import DashboardLayout from "@/lib/feature/admin/DashboardLayout";
-import { DashboardTable } from "@/lib/feature/admin/DashboardTable";
 
 export default function Dashboard() {
   return (
     <DashboardLayout>
-      <DashboardTable />
+      <AnalyticsTable />
     </DashboardLayout>
   );
 }

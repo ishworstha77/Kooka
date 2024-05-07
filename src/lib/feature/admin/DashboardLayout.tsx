@@ -44,7 +44,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { Login } from "./components/Login";
 
-export const DashboardLayout = async () => {
+export const DashboardLayout = async ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
   const session = await getServerSession(authOptions);
 
   return (
@@ -61,7 +65,7 @@ export const DashboardLayout = async () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="#"
+                href="/admin"
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
                 <Home className="h-5 w-5" />
@@ -73,10 +77,11 @@ export const DashboardLayout = async () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="#"
+                href="/cart"
                 className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8"
               >
                 <ShoppingCart className="h-5 w-5" />
+
                 <span className="sr-only">Orders</span>
               </Link>
             </TooltipTrigger>
@@ -109,7 +114,7 @@ export const DashboardLayout = async () => {
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
-                href="#"
+                href="/admin/analytics"
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
                 <LineChart className="h-5 w-5" />
@@ -243,7 +248,7 @@ export const DashboardLayout = async () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
-        <DashboardTable />
+        {children}
       </div>
     </div>
   );

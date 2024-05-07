@@ -13,6 +13,7 @@ import { SignoutButton } from "./SignoutButton";
 
 export const Navbar = async () => {
   const session = await getServerSession(authOptions);
+
   return (
     <div className="flex flex-col gap-8">
       <div className="flex w-full gap-4">
@@ -26,7 +27,9 @@ export const Navbar = async () => {
             />
           </Link>
         </div>
-        <ShoppingCart />
+        <Link href="/cart">
+          <ShoppingCart />
+        </Link>
         <div className="md:hidden">
           <div className="flex items-center">
             <DropdownMenu>
