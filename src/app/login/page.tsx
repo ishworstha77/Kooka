@@ -4,6 +4,7 @@ import { useFormState, useFormStatus } from "react-dom";
 // import { authenticate } from '@/app/lib/actions';
 import Image from "next/image";
 import Link from "next/link";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,11 +15,13 @@ import { useRouter } from "next/navigation";
 import { toast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const loginHandler = async () => {
+    setIsLoading(true);
     const loginData = await signIn("credentials", {
       email: email,
       password: password,
@@ -28,6 +31,7 @@ const Dashboard = () => {
     if (loginData?.error) {
       console.log(loginData?.error);
     } else {
+      setIsLoading(false);
       router?.push("/admin");
       router.refresh();
     }
@@ -76,6 +80,9 @@ const Dashboard = () => {
               className="w-full hover:bg-black"
               onClick={loginHandler}
             >
+              {isLoading && (
+                <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+              )}
               Login
             </Button>
             <Button variant="outline" className="w-full">
@@ -92,7 +99,7 @@ const Dashboard = () => {
       </div>
       <div className="hidden bg-muted lg:block">
         <Image
-          src="/placeholder.svg"
+          src="/story/kooka-story.jpeg"
           alt="Image"
           width="1920"
           height="1080"

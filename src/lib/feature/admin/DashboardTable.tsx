@@ -153,7 +153,7 @@ export const DashboardTable = () => {
                         {item?.totalSales}
                       </TableCell>
                       <TableCell className="hidden md:table-cell">
-                        {item?.createdAt}
+                        {new Date(item?.createdAt).toLocaleString()}
                       </TableCell>
                       <TableCell>
                         <DropdownMenu>

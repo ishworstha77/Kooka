@@ -53,7 +53,6 @@ export const AnalyticsTable = () => {
     queryKey: ["getProductsView"],
     queryFn: getProjectView,
   });
-  console.log("hello", data);
 
   if (isLoading) {
     return <>Loading ...</>;
@@ -116,9 +115,6 @@ export const AnalyticsTable = () => {
                     <TableHead>ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>No of views</TableHead>
-                    <TableHead className="hidden md:table-cell">
-                      Created at
-                    </TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -142,9 +138,6 @@ export const AnalyticsTable = () => {
                         </TableCell>
 
                         <TableCell>{item?.noOfViews}</TableCell>
-                        <TableCell className="hidden md:table-cell">
-                          {item?.product?.createdAt as unknown as string}
-                        </TableCell>
                       </TableRow>
                     )
                   )}
