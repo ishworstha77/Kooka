@@ -61,24 +61,43 @@ export async function POST(req: NextRequest) {
 export async function GET(req: NextRequest) {
     const session = await getServerSession(authOptions)
     const userId = Number((session?.user as User)?.id)
+    const type = req?.nextUrl?.searchParams?.get('type')
 
     if (!session?.user) {
         return NextResponse.json({ message: 'User not authenticated' }, { status: 401 })
+        
     }
 
-    try {
-        const cartItems = await prisma?.cartItem?.findMany({
-            where: {
-                userId: userId
-            },
-            include: {
-                productItem: true
-            }
-        })
-
-        return NextResponse.json({ cartItems })
-    } catch (error) {
-        console.error(error)
-        return NextResponse.json({ message: 'Something went wrong' }, { status: 500 })
+    if(type === 'user'){
+        try {
+            const cartItems = await prisma?.cartItem?.findMany({
+                where: {
+                    userId: userId
+                },
+                include: {
+                    productItem: true
+                }
+            })
+    
+            return NextResponse.json({ cartItems })
+        } catch (error) {
+            console.error(error)
+            return NextResponse.json({ message: 'Something went wrong' }, { status: 500 })
+        }
+    } else {
+        try {
+            const cartItems = await prisma?.cartItem?.findMany({
+                include: {
+                    productItem: true
+                }
+            })
+    
+            return NextResponse.json({ cartItems })
+        } catch (error) {
+            console.error(error)
+            return NextResponse.json({ message: 'Something went wrong' }, { status: 500 })
+        }
     }
+
+    
 }

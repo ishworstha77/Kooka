@@ -54,7 +54,12 @@ export const addToCart = async (data: AddCartData) => {
 };
 
 
-export const getCart = async () => {
+export const getUserCart = async () => {
+  const res = await axios.get(`/api/cart?type=user`);
+  return res;
+};
+
+export const getAllCart = async () => {
   const res = await axios.get(`/api/cart`);
   return res;
 };

@@ -134,7 +134,7 @@ export const AddProductModal = () => {
                       <div key={index}>
                         <div className="flex flex-col gap-1">
                           <input
-                            accept="image/*"
+                            accept=".jpg, .jpeg, .png"
                             type="file"
                             onChange={(e) => onImageUpload(e)}
                             multiple
@@ -168,6 +168,7 @@ export const AddProductModal = () => {
                 </div>
 
                 <Button
+                  className="w-full hover:bg-black"
                   disabled={imageFields?.length !== images?.length}
                   onClick={onSubmit}
                 >

@@ -1,19 +1,20 @@
 "use client";
 
+import { CheckoutSubscriptionBody } from "@/app/checkout-sessions/route";
 import { Button } from "@/components/ui/button";
-import { getCart } from "@/utils/apiFunctions";
+import { getUserCart } from "@/utils/apiFunctions";
 import { CartItem, Product } from "@prisma/client";
+import { loadStripe } from "@stripe/stripe-js";
 import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import Stripe from "stripe";
 
 export const Cart = () => {
-  const router = useRouter();
   const [total, setTotal] = useState(0);
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["getCart"],
-    queryFn: getCart,
+    queryFn: getUserCart,
   });
 
   useEffect(() => {
@@ -30,6 +31,34 @@ export const Cart = () => {
   if (isLoading) {
     return <>Loading...</>;
   }
+
+  const handleCart = async () => {
+    // step 1: load stripe
+    const STRIPE_PK = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!;
+    const stripe = await loadStripe(STRIPE_PK);
+
+    // step 2: define the data for monthly subscription
+    const body: CheckoutSubscriptionBody = {
+      interval: "month",
+      amount: total,
+      plan: "Monthly",
+      planDescription: "Subscribe for $20 per month",
+    };
+
+    // step 3: make a post fetch api call to /checkout-session handler
+    const result = await fetch("/checkout-sessions", {
+      method: "post",
+      body: JSON.stringify(body, null),
+      headers: {
+        "content-type": "application/json",
+      },
+    });
+
+    // step 4: get the data and redirect to checkout using the sessionId
+    const data = (await result.json()) as Stripe.Checkout.Session;
+    const sessionId = data.id!;
+    stripe?.redirectToCheckout({ sessionId });
+  };
 
   return (
     <div className="flex flex-col">
@@ -65,7 +94,7 @@ export const Cart = () => {
             <p className="text-2xl">Total</p>
             <p className="text-xl">${total}</p>
           </div>
-          <Button onClick={() => router.push("/test")}>Checkout</Button>
+          <Button onClick={handleCart}>Checkout</Button>
         </div>
       </div>
     </div>

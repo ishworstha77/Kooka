@@ -3,6 +3,7 @@ import Link from "next/link";
 import {
   Home,
   LineChart,
+  BarChart,
   Package,
   Package2,
   PanelLeft,
@@ -91,7 +92,7 @@ export const DashboardLayout = async ({
             <TooltipTrigger asChild>
               <Link
                 href="#"
-                className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+                className="flex h-9 w-9 items-center justify-center rounded-lg transition-colors hover:text-foreground md:h-8 md:w-8"
               >
                 <Package className="h-5 w-5" />
                 <span className="sr-only">Products</span>
@@ -122,6 +123,18 @@ export const DashboardLayout = async ({
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">Analytics</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Link
+                href="/admin/cart-analytics"
+                className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+              >
+                <BarChart className="h-5 w-5" />
+                <span className="sr-only">Cart Analytics</span>
+              </Link>
+            </TooltipTrigger>
+            <TooltipContent side="right">Cart Analytics</TooltipContent>
           </Tooltip>
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 py-4">
