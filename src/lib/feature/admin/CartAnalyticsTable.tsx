@@ -141,7 +141,7 @@ export const CartAnalyticsTable = () => {
         <TabsContent value="all">
           <Card>
             <CardHeader>
-              <CardTitle>Product Intrests</CardTitle>
+              <CardTitle>Cart count</CardTitle>
               <CardDescription>No of Products added to cart.</CardDescription>
             </CardHeader>
             <CardContent>
