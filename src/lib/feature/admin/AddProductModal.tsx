@@ -92,9 +92,9 @@ export const AddProductModal = (props: {
         name: productDataObj?.name,
         description: productDataObj?.description,
         price: productDataObj?.price,
-        images: productDataObj?.images,
+        // images: productDataObj?.images,
       });
-      setImages([...images, ...productDataObj?.images]);
+      // setImages([...productDataObj?.images]);
     }
   }, [JSON.stringify(productDataObj)]);
 
