@@ -66,3 +66,68 @@ export async function GET(req: NextRequest) {
         }
     }
 }
+
+export async function PUT(req: NextRequest) {
+    const session = await getServerSession(authOptions)
+
+    if (!session?.user) {
+        return NextResponse.json({ message: 'User not authenticated' }, { status: 401 })
+    }
+
+    try {
+        const { productId, name, description, price, images } = await req.json()
+
+        if (!productId || !name) {
+            return NextResponse.json({ message: 'Product ID and name are required' }, { status: 400 })
+        }
+
+        const existingProduct = await prisma?.product.findUnique({ where: { id: productId } })
+
+        if (!existingProduct) {
+            return NextResponse.json({ message: 'Product not found' }, { status: 404 })
+        }
+
+        const updatedProduct = await prisma?.product.update({
+            where: { id: productId },
+            data: {
+                name,
+                description,
+                price: Number(price),
+                images
+            }
+        })
+
+        return NextResponse.json({ product: updatedProduct, message: 'Product updated successfully' }, { status: 200 })
+    } catch (error) {
+        return NextResponse.json({ message: 'Something went wrong' }, { status: 500 })
+    }
+}
+
+export async function DELETE(req: NextRequest) {
+    const session = await getServerSession(authOptions)
+
+    if(!session?.user) {
+      return NextResponse.json({message: 'User not authenticated'}, {status: 401})
+    }
+    
+    try {
+        const { productId } = await req.json()
+
+        if (!productId) {
+            return NextResponse.json({ message: 'Product ID is required' }, { status: 400 })
+        }
+
+        const existingProduct = await prisma?.product?.findUnique({ where: { id: productId } })
+
+        if (!existingProduct) {
+            return NextResponse.json({ message: 'Product not found' }, { status: 404 })
+        }
+
+        await prisma?.productView?.deleteMany({ where: { productId } })
+        await prisma?.product?.delete({ where: { id: Number(productId) } })
+
+        return NextResponse.json({ message: 'Product deleted successfully' }, { status: 200 })
+    } catch(error) {
+        return NextResponse.json({ message: 'Something went wrong' }, { status: 500 })
+    }
+}

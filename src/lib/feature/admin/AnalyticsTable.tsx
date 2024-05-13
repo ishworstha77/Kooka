@@ -34,7 +34,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { useQuery } from "@tanstack/react-query";
 import AddProductModal from "./AddProductModal";
-import { getProducts, getProjectView } from "@/utils/apiFunctions";
+import { getProductView, getProducts } from "@/utils/apiFunctions";
 import { Product, ProductView } from "@prisma/client";
 
 interface ProductData {
@@ -51,7 +51,7 @@ interface ProductData {
 export const AnalyticsTable = () => {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["getProductsView"],
-    queryFn: getProjectView,
+    queryFn: getProductView,
   });
 
   if (isLoading) {
@@ -96,7 +96,6 @@ export const AnalyticsTable = () => {
                 Export
               </span>
             </Button>
-            <AddProductModal />
           </div>
         </div>
         <TabsContent value="all">

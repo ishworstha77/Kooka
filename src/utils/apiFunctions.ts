@@ -27,26 +27,48 @@ export interface AddCartData {
   quantity: number;
 }
 
+
+// product 
 export const getProducts = async () => {
     const res = await axios.get("/api/product");
     return res;
 };
 
-export const addProject = async (data: ProductAddData) => {
+export const getProduct = async (id: number) => {
+  const res = await axios.get(`/api/product?id=${id}`);
+  return res;
+};
+
+export const addProduct = async (data: ProductAddData) => {
   const res = await axios.post(`/api/product`, data);
   return res;
 };
 
-export const setProjectView = async (data: ProductView) => {
+export const updateProduct = async (data: ProductAddData & {productId: number}) => {
+  const res = await axios.put(`/api/product`, data);
+  return res;
+};
+
+export const deleteProduct = async (data: {productId: number}) => {
+  const res = await axios.delete(`/api/product`, {data});
+  return res;
+};
+
+
+// product view
+
+export const setProductView = async (data: ProductView) => {
   const res = await axios.post(`/api/product-view`, data);
   return res;
 };
 
-export const getProjectView = async () => {
+export const getProductView = async () => {
   const res = await axios.get(`/api/product-view`);
   return res;
 };
 
+
+// cart
 
 export const addToCart = async (data: AddCartData) => {
   const res = await axios.post(`/api/cart`, data);

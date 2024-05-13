@@ -34,7 +34,7 @@ import { Badge } from "@/components/ui/badge";
 
 import { useQuery } from "@tanstack/react-query";
 import AddProductModal from "./AddProductModal";
-import { getAllCart, getProducts, getProjectView } from "@/utils/apiFunctions";
+import { getAllCart, getProducts } from "@/utils/apiFunctions";
 import { CartItem, Product } from "@prisma/client";
 import { useEffect, useState } from "react";
 
@@ -135,7 +135,6 @@ export const CartAnalyticsTable = () => {
                 Export
               </span>
             </Button>
-            <AddProductModal />
           </div>
         </div>
         <TabsContent value="all">

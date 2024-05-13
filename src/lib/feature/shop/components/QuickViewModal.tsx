@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { ProductData, addToCart, setProjectView } from "@/utils/apiFunctions";
+import { ProductData, addToCart, setProductView } from "@/utils/apiFunctions";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
@@ -23,7 +23,7 @@ export const QuickViewModal = (props: {
   const { open, setOpen, selectedItem } = props;
 
   const { mutate } = useMutation({
-    mutationFn: setProjectView,
+    mutationFn: setProductView,
   });
 
   const { mutate: addToCartMutate } = useMutation({

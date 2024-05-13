@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogHeader,
@@ -13,12 +14,25 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { PlusCircle } from "lucide-react";
-import { ChangeEvent, MouseEvent, useState } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { PlusCircle, X } from "lucide-react";
+import {
+  ChangeEvent,
+  Dispatch,
+  MouseEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useToast } from "@/components/ui/use-toast";
-import { ProductAddData, addProject } from "@/utils/apiFunctions";
+import {
+  ProductAddData,
+  addProduct,
+  getProduct,
+  updateProduct,
+} from "@/utils/apiFunctions";
+import { Product } from "@prisma/client";
 
 const formDefaultValues = {
   name: "",
@@ -27,13 +41,19 @@ const formDefaultValues = {
   images: [{}],
 };
 
-export const AddProductModal = () => {
+export const AddProductModal = (props: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  selectedProduct: number;
+  setSelectedProduct: Dispatch<SetStateAction<number>>;
+}) => {
+  const { open, setOpen, selectedProduct, setSelectedProduct } = props;
+
   const bucket = "images";
   const [images, setImages] = useState<string[]>([]);
   const supabase = createClientComponentClient();
   const { toast } = useToast();
 
-  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const {
     register,
@@ -54,11 +74,63 @@ export const AddProductModal = () => {
     name: "images",
   });
 
-  const { mutate } = useMutation({
-    mutationFn: addProject,
+  const {
+    data: productData,
+    isLoading,
+    refetch,
+  } = useQuery({
+    queryKey: ["getProducts", selectedProduct],
+    queryFn: ({ queryKey }) => getProduct(queryKey[1] as number),
+    enabled: !!selectedProduct,
+  });
+
+  const productDataObj = productData?.data as Product;
+
+  useEffect(() => {
+    if (productDataObj) {
+      reset({
+        name: productDataObj?.name,
+        description: productDataObj?.description,
+        price: productDataObj?.price,
+        images: productDataObj?.images,
+      });
+      setImages([...images, ...productDataObj?.images]);
+    }
+  }, [JSON.stringify(productDataObj)]);
+
+  const { mutate: addProductMutate } = useMutation({
+    mutationFn: addProduct,
 
     onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: "Product added successfully",
+      });
       setOpen(false);
+      setSelectedProduct(null);
+      queryClient.invalidateQueries({ queryKey: ["getProducts"] });
+      reset(formDefaultValues);
+      // Perform actions upon successful mutation
+    },
+    onError: (error: { response: { data: { message: string } } }) => {
+      const errorMessage = error?.response?.data?.message;
+      toast({
+        title: "Error",
+        description: errorMessage,
+      });
+    },
+  });
+
+  const { mutate: updateProductMutate } = useMutation({
+    mutationFn: updateProduct,
+
+    onSuccess: (data) => {
+      toast({
+        title: "Success",
+        description: "Product updated successfully",
+      });
+      setOpen(false);
+      setSelectedProduct(null);
       queryClient.invalidateQueries({ queryKey: ["getProducts"] });
       reset(formDefaultValues);
       // Perform actions upon successful mutation
@@ -90,11 +162,20 @@ export const AddProductModal = () => {
   };
 
   const onSubmit = (e: MouseEvent) => {
-    e.preventDefault();
-    mutate({
-      ...getValues(),
-      images: images,
-    } as unknown as ProductAddData);
+    if (selectedProduct) {
+      e.preventDefault();
+      updateProductMutate({
+        productId: selectedProduct,
+        ...getValues(),
+        images: images,
+      } as unknown as ProductAddData & { productId: number });
+    } else {
+      e.preventDefault();
+      addProductMutate({
+        ...getValues(),
+        images: images,
+      } as unknown as ProductAddData);
+    }
   };
 
   return (
@@ -110,6 +191,17 @@ export const AddProductModal = () => {
         </div>
       </DialogTrigger>
       <DialogContent>
+        <DialogClose
+          onClick={() => {
+            setSelectedProduct(null);
+            setOpen(false);
+            reset(formDefaultValues);
+          }}
+        >
+          <div className="absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground">
+            <X className="h-4 w-4" />
+          </div>
+        </DialogClose>
         <DialogHeader>
           <DialogTitle>Add Product</DialogTitle>
           <DialogDescription>

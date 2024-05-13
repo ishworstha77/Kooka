@@ -32,9 +32,11 @@ import {
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import AddProductModal from "./AddProductModal";
-import { getProducts } from "@/utils/apiFunctions";
+import { deleteProduct, getProducts } from "@/utils/apiFunctions";
+import { toast } from "@/components/ui/use-toast";
+import { useState } from "react";
 
 interface ProductData {
   id: number;
@@ -48,11 +50,36 @@ interface ProductData {
 }
 
 export const DashboardTable = () => {
+  const [open, setOpen] = useState(false);
+  const [selectedProduct, setSelectedProduct] = useState<number>();
+
+  const queryClient = useQueryClient();
+
   const {
     data: productData,
     isLoading,
     refetch,
   } = useQuery({ queryKey: ["getProducts"], queryFn: getProducts });
+
+  const { mutate: deleteProductMutate } = useMutation({
+    mutationFn: deleteProduct,
+
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["getProducts"] });
+      // Perform actions upon successful mutation
+      toast({
+        title: "Error",
+        description: "product deleted successfully",
+      });
+    },
+    onError: (error: { response: { data: { message: string } } }) => {
+      const errorMessage = error?.response?.data?.message;
+      toast({
+        title: "Error",
+        description: errorMessage,
+      });
+    },
+  });
 
   if (isLoading) {
     return <>Loading ...</>;
@@ -96,7 +123,12 @@ export const DashboardTable = () => {
                 Export
               </span>
             </Button>
-            <AddProductModal />
+            <AddProductModal
+              open={open}
+              setOpen={setOpen}
+              selectedProduct={selectedProduct}
+              setSelectedProduct={setSelectedProduct}
+            />
           </div>
         </div>
         <TabsContent value="all">
@@ -169,8 +201,21 @@ export const DashboardTable = () => {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                            <DropdownMenuItem>Delete</DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() => {
+                                setOpen(true);
+                                setSelectedProduct(item?.id);
+                              }}
+                            >
+                              Edit
+                            </DropdownMenuItem>
+                            <DropdownMenuItem
+                              onClick={() =>
+                                deleteProductMutate({ productId: item?.id })
+                              }
+                            >
+                              Delete
+                            </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>
