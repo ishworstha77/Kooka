@@ -64,6 +64,7 @@ export const AddProductModal = (props: {
   } = useForm({
     defaultValues: formDefaultValues,
   });
+  console.log("hello", getValues(), images);
 
   const {
     fields: imageFields,
@@ -92,9 +93,9 @@ export const AddProductModal = (props: {
         name: productDataObj?.name,
         description: productDataObj?.description,
         price: productDataObj?.price,
-        // images: productDataObj?.images,
+        images: productDataObj?.images?.map((_) => ({})),
       });
-      // setImages([...productDataObj?.images]);
+      setImages([...productDataObj?.images]);
     }
   }, [JSON.stringify(productDataObj)]);
 

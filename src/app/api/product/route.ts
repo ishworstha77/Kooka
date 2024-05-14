@@ -128,6 +128,6 @@ export async function DELETE(req: NextRequest) {
 
         return NextResponse.json({ message: 'Product deleted successfully' }, { status: 200 })
     } catch(error) {
-        return NextResponse.json({ message: 'Something went wrong' }, { status: 500 })
+        return NextResponse.json({ message: 'Something went wrong: Either product is in cart or there is network error ' }, { status: 500 })
     }
 }
