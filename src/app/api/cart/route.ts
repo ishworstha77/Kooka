@@ -135,8 +135,9 @@ export async function DELETE(req: NextRequest) {
   }
 
   try {
-    const { cartId } = await req.json();
+    const { cartId: allCartIds } = await req.json();
 
+    const cartId = allCartIds.map((c) => +c);
     if (!cartId) {
       return NextResponse.json(
         { message: "CartId ID is required" },
@@ -144,15 +145,17 @@ export async function DELETE(req: NextRequest) {
       );
     }
 
-    const existingCart = await prisma?.cartItem?.findUnique({
-      where: { id: cartId },
+    const existingCart = await prisma?.cartItem?.findMany({
+      where: {
+        id: { in: cartId },
+      },
     });
 
     if (!existingCart) {
       return NextResponse.json({ message: "Cart not found" }, { status: 404 });
     }
 
-    await prisma?.cartItem?.delete({ where: { id: Number(cartId) } });
+    await prisma?.cartItem?.deleteMany({ where: { id: { in: cartId } } });
 
     return NextResponse.json(
       { message: "Cart deleted successfully" },

@@ -88,7 +88,14 @@ export const getAllCart = async () => {
   return res;
 };
 
-export const deleteCart = async (data: { cartId: number }) => {
+export const deleteCart = async (data: { cartId: number[] }) => {
   const res = await axios.delete(`/api/cart`, { data });
+  return res;
+};
+
+export const addSales = async (
+  data: { productId: number; quantity: number }[]
+) => {
+  const res = await axios.post(`/api/sales`, data);
   return res;
 };

@@ -1,12 +1,15 @@
 import type { Stripe } from "stripe";
 
 import { stripe } from "@/lib/stripe";
-
+import { authOptions } from "@/lib/auth";
 import prisma from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { User, getServerSession } from "next-auth";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   let event: Stripe.Event;
+  const session = await getServerSession(authOptions);
+  const userId = Number((session.user as User)?.id);
 
   try {
     event = stripe.webhooks.constructEvent(
@@ -41,27 +44,6 @@ export async function POST(req: Request) {
       switch (event.type) {
         case "checkout.session.completed":
           data = event.data.object as Stripe.Checkout.Session;
-          console.log("Jsons", JSON.stringify(event.data));
-          const session = await stripe.checkout.sessions.retrieve(data.id, {
-            expand: ["line_items", "line_items.data.price.product"],
-          });
-
-          const salesInfo = session.line_items?.data?.map((d) => ({
-            productId: +d.price.product?.metadata?.productId,
-            quantity: d.quantity,
-            userId: +d.price.product?.metadata?.userId,
-          }));
-
-          await prisma?.sales?.createMany({
-            data: salesInfo,
-          });
-
-          const allCartId = session.line_items?.data?.map(
-            (d) => +d.price.product?.metadata?.cartId
-          );
-          await prisma?.cartItem?.deleteMany({
-            where: { id: { in: allCartId } },
-          });
           console.log(`💰 CheckoutSession status: ${data.payment_status}`);
           break;
         case "payment_intent.payment_failed":
