@@ -43,6 +43,20 @@ export const addProduct = async (data: ProductAddData) => {
   return res;
 };
 
+export const getSales = async () => {
+  const res = await axios.get(`/api/sales`);
+  return res;
+};
+
+export const createUser = async (data: {
+  user: string;
+  name: string;
+  password: string;
+}) => {
+  const res = await axios.post(`/api/user`, data);
+  return res;
+};
+
 export const updateProduct = async (
   data: ProductAddData & { productId: number }
 ) => {

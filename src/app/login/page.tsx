@@ -1,6 +1,5 @@
 "use client";
 
-import { useFormState, useFormStatus } from "react-dom";
 // import { authenticate } from '@/app/lib/actions';
 import Image from "next/image";
 import Link from "next/link";
@@ -31,8 +30,14 @@ const Dashboard = () => {
     if (loginData?.error) {
       console.log(loginData?.error);
     } else {
+      console.log("loginData", loginData);
       setIsLoading(false);
-      router?.push("/admin");
+
+      if (email === "admin@gmail.com") {
+        router?.push("/admin");
+      } else {
+        router?.replace("/");
+      }
       router.refresh();
     }
   };
@@ -61,12 +66,12 @@ const Dashboard = () => {
             <div className="grid gap-2">
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
-                <Link
+                {/* <Link
                   href="/forgot-password"
                   className="ml-auto inline-block text-sm underline"
                 >
                   Forgot your password?
-                </Link>
+                </Link> */}
               </div>
               <Input
                 id="password"
@@ -88,7 +93,7 @@ const Dashboard = () => {
           </div>
           <div className="mt-4 text-center text-sm">
             Don&apos;t have an account?{" "}
-            <Link href="#" className="underline">
+            <Link href="/register" className="underline">
               Sign up
             </Link>
           </div>

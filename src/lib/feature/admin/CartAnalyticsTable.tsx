@@ -37,6 +37,7 @@ import AddProductModal from "./AddProductModal";
 import { getAllCart, getProducts } from "@/utils/apiFunctions";
 import { CartItem, Product } from "@prisma/client";
 import { useEffect, useState } from "react";
+import { table } from "console";
 
 interface ProductData {
   id: number;
@@ -186,7 +187,11 @@ export const CartAnalyticsTable = () => {
         </TabsContent>
         <TabsContent value="bar">
           <Card>
-            <ApexChart data={tableData} />
+            <div className="flex items-center justify-center w-full h-full relative">
+              <div className="max-w-screen-lg h-full w-full">
+                <ApexChart data={tableData} />
+              </div>
+            </div>
           </Card>
         </TabsContent>
         <TabsContent value="pie">

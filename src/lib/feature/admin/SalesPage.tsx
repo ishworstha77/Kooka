@@ -33,8 +33,9 @@ import {
 import Image from "next/image";
 
 import { useQuery } from "@tanstack/react-query";
-import { getProductView, getProducts } from "@/utils/apiFunctions";
-import { Product, ProductView } from "@prisma/client";
+import { getProductView, getProducts, getSales } from "@/utils/apiFunctions";
+import { Product, ProductView, Sales, User } from "@prisma/client";
+import { AvatarImage } from "@/components/ui/avatar";
 
 interface ProductData {
   id: number;
@@ -47,12 +48,13 @@ interface ProductData {
   images: string[];
 }
 
-export const AnalyticsTable = () => {
+export const SalesPage = () => {
   const { data, isLoading, refetch } = useQuery({
-    queryKey: ["getProductsView"],
-    queryFn: getProductView,
+    queryKey: ["getSales"],
+    queryFn: getSales,
   });
 
+  console.log("data", data);
   if (isLoading) {
     return <>Loading ...</>;
   }
@@ -97,8 +99,8 @@ export const AnalyticsTable = () => {
         <TabsContent value="table">
           <Card>
             <CardHeader>
-              <CardTitle>Views</CardTitle>
-              <CardDescription>No of views of products.</CardDescription>
+              <CardTitle>Sales</CardTitle>
+              <CardDescription>No of Sales of products.</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -108,28 +110,48 @@ export const AnalyticsTable = () => {
                       <span className="sr-only">Image</span>
                     </TableHead>
                     <TableHead>Name</TableHead>
-                    <TableHead>No of views</TableHead>
+                    <TableHead>Quantity</TableHead>
+                    <TableHead>Unit Price</TableHead>
+                    <TableHead>Total Price</TableHead>
+                    <TableHead>Bought By</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {data?.data?.map?.(
-                    (item: ProductView & { product: Product }) => (
+                    (item: Sales & { productItem: Product; user: User }) => (
                       <TableRow key={item?.id}>
                         <TableCell className="hidden sm:table-cell">
                           <Image
                             alt="Product image"
                             className="aspect-square rounded-md object-cover"
                             height="64"
-                            src={item?.product?.images?.[0] || ""}
+                            src={item?.productItem?.images?.[0] || ""}
                             width="64"
                           />
                         </TableCell>
 
                         <TableCell className="font-medium">
-                          {item?.product?.name}
+                          {item?.productItem?.name}
+                        </TableCell>
+                        <TableCell className="font-medium">
+                          {item?.quantity}
                         </TableCell>
 
-                        <TableCell>{item?.noOfViews}</TableCell>
+                        <TableCell>{item?.productItem?.price}</TableCell>
+                        <TableCell>
+                          {item?.productItem?.price * item?.quantity}
+                        </TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <p className="text-md text-black">
+                              {item?.user?.name}
+                            </p>
+
+                            <p className="text-xs text-slate-500">
+                              {item?.user?.email}
+                            </p>
+                          </div>
+                        </TableCell>
                       </TableRow>
                     )
                   )}
@@ -144,12 +166,8 @@ export const AnalyticsTable = () => {
           </Card>
         </TabsContent>
         <TabsContent value="bar">
-          <Card className="">
-            <div className="flex items-center justify-center w-full h-full relative">
-              <div className="max-w-screen-lg h-full w-full">
-                <ApexChart />
-              </div>
-            </div>
+          <Card>
+            <ApexChart />
           </Card>
         </TabsContent>
         <TabsContent value="pie">

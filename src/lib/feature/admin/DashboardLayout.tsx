@@ -144,10 +144,10 @@ export const DashboardLayout = async ({
                 className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
               >
                 <PieChart className="h-5 w-5" />
-                <span className="sr-only">Pie Chart</span>
+                <span className="sr-only">Sales Analytics</span>
               </Link>
             </TooltipTrigger>
-            <TooltipContent side="right">Pie Chart</TooltipContent>
+            <TooltipContent side="right">Sales Analytics</TooltipContent>
           </Tooltip>
         </nav>
         <nav className="mt-auto flex flex-col items-center gap-4 px-2 py-4">

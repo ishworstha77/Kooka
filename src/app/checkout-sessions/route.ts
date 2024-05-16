@@ -24,7 +24,7 @@ export async function POST(req: Request) {
 
   // if user is logged in, redirect to thank you page, otherwise redirect to signup page.
   const success_url = !body.customerId
-    ? `${origin}/signup?session_id={CHECKOUT_SESSION_ID}&`
+    ? `${origin}/?session_id={CHECKOUT_SESSION_ID}&`
     : `${origin}/thankyou?session_id={CHECKOUT_SESSION_ID}`;
 
   try {

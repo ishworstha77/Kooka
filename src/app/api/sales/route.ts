@@ -45,38 +45,18 @@ export async function POST(req: NextRequest) {
 }
 
 export async function GET(req: NextRequest) {
-  const id = req?.nextUrl?.searchParams?.get("id");
-  if (id) {
-    try {
-      const product = await prisma.product.findUnique({
-        where: {
-          id: Number(id),
-        },
-      });
-
-      if (!product) {
-        return NextResponse.json(
-          { message: "Product not found" },
-          { status: 404 }
-        );
-      }
-
-      return NextResponse.json(product, { status: 200 });
-    } catch (e) {
-      return NextResponse.json(
-        { message: "Something went wrong" },
-        { status: 500 }
-      );
-    }
-  } else {
-    try {
-      const products = await prisma.product.findMany();
-      return NextResponse.json(products, { status: 200 });
-    } catch (error) {
-      return NextResponse.json(
-        { message: "Something went wrong" },
-        { status: 500 }
-      );
-    }
+  try {
+    const sales = await prisma.sales.findMany({
+      include: {
+        productItem: true,
+        user: true,
+      },
+    });
+    return NextResponse.json(sales, { status: 200 });
+  } catch (error) {
+    return NextResponse.json(
+      { message: "Something went wrong" },
+      { status: 500 }
+    );
   }
 }
