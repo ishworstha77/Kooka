@@ -23,6 +23,6 @@ const ApexChart = () => {
     },
   ];
 
-  return <Chart options={options} series={series} type="area" />;
+  return <Chart options={options} series={series} type="line" />;
 };
 export default ApexChart;

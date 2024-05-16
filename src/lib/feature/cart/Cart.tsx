@@ -62,14 +62,10 @@ export const Cart = () => {
 
   return (
     <div className="flex flex-col">
-      <p className="text-3xl font-semibold mb-8">Shopping Cart</p>
+      <p className="text-3xl font-semibold mb-8 text-primary-500">
+        Shopping Cart
+      </p>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between gap-8">
-          <p>Image</p>
-          <p>Name</p>
-          <p>Quantity</p>
-          <p>Price</p>
-        </div>
         {data?.data?.cartItems?.map(
           (item: CartItem & { productItem: Product }) => (
             <div

@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { ProductData, addToCart, setProductView } from "@/utils/apiFunctions";
 import { useMutation } from "@tanstack/react-query";
-import Image from "next/image";
+import Image from "@/components/ui/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 
 export const QuickViewModal = (props: {
@@ -61,15 +61,19 @@ export const QuickViewModal = (props: {
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent>
+      <DialogContent className="max-w-screen-md">
         <DialogHeader>
           <DialogDescription>
-            <div className="grid grid-cols-1 md:grid-cols-3 grid-flow-row gap-4">
-              <div className="grid col-span-1">
+            <div className="flex gap-4">
+              <div className="w-[40%]">
                 <div className="flex flex-col gap-4">
-                  <p>{selectedItem?.name}</p>
+                  <p className="text-lg truncate text-ellipsis text-black font-bold">
+                    {selectedItem?.name}
+                  </p>
                   <p>${selectedItem?.price}</p>
-                  <p>{selectedItem?.description}</p>
+                  <p className="text-xs leading-8">
+                    {selectedItem?.description}
+                  </p>
                   <div className="flex flex-col gap-2">
                     <p>Quantity</p>
                     <Input
@@ -85,16 +89,13 @@ export const QuickViewModal = (props: {
                   <p>View Full Item</p>
                 </div>
               </div>
-              <div className="grid col-span-2">
-                <div className="flex items-center justify-center">
+              <div className="w-[60%] h-[500px]">
+                <div className={`relative h-[400px] w-full`}>
                   <Image
-                    // className="object-cover"
-                    className="h-52 w-52"
+                    alt="Product"
+                    fill
+                    className="object-cover"
                     src={selectedItem?.images?.[0]}
-                    alt="breadcrumb1"
-                    // fill
-                    width={500}
-                    height={500}
                   />
                 </div>
               </div>
