@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { File, ListFilter, MoreHorizontal } from "lucide-react";
+import Chart from "react-apexcharts";
 
 import {
   Card,
@@ -30,10 +31,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
 
 import { useQuery } from "@tanstack/react-query";
-import AddProductModal from "./AddProductModal";
 import { getProductView, getProducts } from "@/utils/apiFunctions";
 import { Product, ProductView } from "@prisma/client";
 
@@ -60,15 +59,12 @@ export const AnalyticsTable = () => {
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-      <Tabs defaultValue="all">
+      <Tabs defaultValue="table">
         <div className="flex items-center">
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="draft">Draft</TabsTrigger>
-            <TabsTrigger value="archived" className="hidden sm:flex">
-              Archived
-            </TabsTrigger>
+            <TabsTrigger value="table">Table</TabsTrigger>
+            <TabsTrigger value="bar">Bar Graph</TabsTrigger>
+            <TabsTrigger value="pie">Pie Chart</TabsTrigger>
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
@@ -98,7 +94,7 @@ export const AnalyticsTable = () => {
             </Button>
           </div>
         </div>
-        <TabsContent value="all">
+        <TabsContent value="table">
           <Card>
             <CardHeader>
               <CardTitle>Views</CardTitle>
@@ -111,7 +107,6 @@ export const AnalyticsTable = () => {
                     <TableHead className="hidden w-[100px] sm:table-cell">
                       <span className="sr-only">Image</span>
                     </TableHead>
-                    <TableHead>ID</TableHead>
                     <TableHead>Name</TableHead>
                     <TableHead>No of views</TableHead>
                   </TableRow>
@@ -129,9 +124,7 @@ export const AnalyticsTable = () => {
                             width="64"
                           />
                         </TableCell>
-                        <TableCell className="font-medium">
-                          {item?.product?.id}
-                        </TableCell>
+
                         <TableCell className="font-medium">
                           {item?.product?.name}
                         </TableCell>
@@ -150,7 +143,96 @@ export const AnalyticsTable = () => {
             </CardFooter>
           </Card>
         </TabsContent>
+        <TabsContent value="bar">
+          <Card>
+            <ApexChart />
+          </Card>
+        </TabsContent>
+        <TabsContent value="pie">
+          <Card>
+            <div className="max-w-screen-lg">
+              <PieChart />
+            </div>
+          </Card>
+        </TabsContent>
       </Tabs>
     </main>
   );
+};
+
+const ApexChart = () => {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["getProductsView"],
+    queryFn: getProductView,
+  });
+
+  const formula = data?.data?.reduce((obj, curr) => {
+    return {
+      [curr.product?.id]: {
+        name: curr.product.name,
+        data: [...(obj?.[curr.product?.id]?.data ?? []), curr.noOfViews],
+      },
+      ...(obj ?? {}),
+    };
+  }, {});
+
+  console.log("formula", formula);
+  const options = {
+    xaxis: {
+      categories: data.data?.map((d) => d.product?.name),
+    },
+  };
+  const series = [
+    {
+      name: "series-1",
+      data: data.data?.map((d) => d.noOfViews),
+    },
+  ];
+
+  return <Chart options={options} series={series} type="bar" />;
+};
+
+const PieChart = () => {
+  const { data, isLoading, refetch } = useQuery({
+    queryKey: ["getProductsView"],
+    queryFn: getProductView,
+  });
+
+  const formula = data?.data?.reduce((obj, curr) => {
+    return {
+      [curr.product?.id]: {
+        name: curr.product.name,
+        data: [...(obj?.[curr.product?.id]?.data ?? []), curr.noOfViews],
+      },
+      ...(obj ?? {}),
+    };
+  }, {});
+
+  console.log("formula", formula);
+  const options = {
+    xaxis: {
+      categories: data.data?.map((d) => d.product?.name),
+    },
+    chart: {
+      width: 50,
+      type: "pie",
+    },
+    labels: data?.data?.map((d) => d.product?.name),
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 50,
+          },
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    ],
+  };
+  const series = data.data?.map((d) => d.noOfViews);
+
+  return <Chart options={options} series={series} type="pie" />;
 };

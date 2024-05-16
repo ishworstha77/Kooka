@@ -5,11 +5,14 @@ import { Button } from "@/components/ui/button";
 import { getUserCart } from "@/utils/apiFunctions";
 import { CartItem, Product } from "@prisma/client";
 import { loadStripe } from "@stripe/stripe-js";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Stripe from "stripe";
-import { deleteCart } from "@/utils/apiFunctions";
+import { deleteCart, getAllCart } from "@/utils/apiFunctions";
+import { toast } from "@/components/ui/use-toast";
+import { Loader, XIcon } from "lucide-react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export const Cart = () => {
   const [total, setTotal] = useState(0);
@@ -65,27 +68,7 @@ export const Cart = () => {
       <div className="flex flex-col gap-4">
         {data?.data?.cartItems?.map(
           (item: CartItem & { productItem: Product }) => (
-            <div
-              key={item?.id}
-              className="flex justify-between text-left gap-8 items-center"
-            >
-              <Image
-                src={item?.productItem?.images?.[0]}
-                alt="product"
-                height={200}
-                width={200}
-              />
-              <p>{item?.productItem?.name}</p>
-              <p>{item?.quantity}</p>
-              <p>${item?.productItem?.price}</p>
-              <button
-                onClick={() => {
-                  deleteCart({ cartId: item.id });
-                }}
-              >
-                x
-              </button>
-            </div>
+            <CartDetails item={item} key={item.id} />
           )
         )}
         <div className="border-t border-gray-400 my-4" />
@@ -102,3 +85,55 @@ export const Cart = () => {
 };
 
 export default Cart;
+
+function CartDetails({ item }: { item: CartItem & { productItem: Product } }) {
+  const queryClient = useQueryClient();
+
+  const { mutate: deleteCartMutate, isPending: isDeleting } = useMutation({
+    mutationFn: deleteCart,
+
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["getCart"] });
+      // Perform actions upon successful mutation
+      toast({
+        title: "Success",
+        description: "Cart Item deleted successfully",
+      });
+    },
+    onError: (error: { response: { data: { message: string } } }) => {
+      const errorMessage = error?.response?.data?.message;
+      toast({
+        title: "Error",
+        description: errorMessage,
+      });
+    },
+  });
+  return (
+    <div
+      key={item?.id}
+      className="flex justify-between text-left gap-8 items-center"
+    >
+      <Image
+        src={item?.productItem?.images?.[0]}
+        alt="product"
+        height={200}
+        width={200}
+      />
+      <p>{item?.productItem?.name}</p>
+      <p>{item?.quantity}</p>
+      <p>${item?.productItem?.price}</p>
+      <button
+        className=" rounded-full w-8 flex justify-center items-center h-8 hover:bg-slate-200 text-slate-400 hover:text-slate-700"
+        onClick={() => {
+          deleteCartMutate({ cartId: item.id });
+        }}
+      >
+        {isDeleting ? (
+          <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+        ) : (
+          <XIcon className="text-slate-400 hover:text-slate-800" />
+        )}
+      </button>
+    </div>
+  );
+}

@@ -76,7 +76,7 @@ export const DashboardLayout = async ({
             </TooltipTrigger>
             <TooltipContent side="right">Dashboard</TooltipContent>
           </Tooltip>
-          <Tooltip>
+          {/* <Tooltip>
             <TooltipTrigger asChild>
               <Link
                 href="/cart"
@@ -88,7 +88,7 @@ export const DashboardLayout = async ({
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">Orders</TooltipContent>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -101,7 +101,7 @@ export const DashboardLayout = async ({
             </TooltipTrigger>
             <TooltipContent side="right">Products</TooltipContent>
           </Tooltip>
-          <Tooltip>
+          {/* <Tooltip>
             <TooltipTrigger asChild>
               <Link
                 href="#"
@@ -112,7 +112,7 @@ export const DashboardLayout = async ({
               </Link>
             </TooltipTrigger>
             <TooltipContent side="right">Customers</TooltipContent>
-          </Tooltip>
+          </Tooltip> */}
           <Tooltip>
             <TooltipTrigger asChild>
               <Link
@@ -190,13 +190,13 @@ export const DashboardLayout = async ({
                   <Home className="h-5 w-5" />
                   Dashboard
                 </Link>
-                <Link
+                {/* <Link
                   href="#"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <ShoppingCart className="h-5 w-5" />
                   Orders
-                </Link>
+                </Link> */}
                 <Link
                   href="#"
                   className="flex items-center gap-4 px-2.5 text-foreground"
@@ -204,13 +204,13 @@ export const DashboardLayout = async ({
                   <Package className="h-5 w-5" />
                   Products
                 </Link>
-                <Link
+                {/* <Link
                   href="#"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"
                 >
                   <Users2 className="h-5 w-5" />
                   Customers
-                </Link>
+                </Link> */}
                 <Link
                   href="#"
                   className="flex items-center gap-4 px-2.5 text-muted-foreground hover:text-foreground"

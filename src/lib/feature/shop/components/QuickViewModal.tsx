@@ -10,9 +10,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { ProductData, addToCart, setProductView } from "@/utils/apiFunctions";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "@/components/ui/image";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { ReloadIcon } from "@radix-ui/react-icons";
 
 export const QuickViewModal = (props: {
   open: boolean;
@@ -26,10 +27,13 @@ export const QuickViewModal = (props: {
     mutationFn: setProductView,
   });
 
-  const { mutate: addToCartMutate } = useMutation({
+  const queryClient = useQueryClient();
+
+  const { mutate: addToCartMutate, isPending: isAdding } = useMutation({
     mutationFn: addToCart,
 
     onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["getCart"] });
       toast({
         title: "Success",
         description: data?.data?.message,
@@ -83,7 +87,14 @@ export const QuickViewModal = (props: {
                       onChange={(e) => setQuantity(Number(e?.target?.value))}
                     />
                   </div>
-                  <Button variant="outline" onClick={addToCartHandler}>
+                  <Button
+                    variant="outline"
+                    className="bg-black text-white py-8"
+                    onClick={addToCartHandler}
+                  >
+                    {isAdding && (
+                      <ReloadIcon className="mr-2 h-4 w-4 animate-spin" />
+                    )}
                     Add to cart
                   </Button>
                   <p>View Full Item</p>

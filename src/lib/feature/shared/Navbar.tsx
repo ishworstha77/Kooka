@@ -11,7 +11,8 @@ import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { SignoutButton } from "./SignoutButton";
-
+import { getUserCart } from "@/utils/apiFunctions";
+import CartIcon from "./CartIcon";
 export const Navbar = async () => {
   const session = await getServerSession(authOptions);
 
@@ -28,9 +29,7 @@ export const Navbar = async () => {
             />
           </Link>
         </div>
-        <Link href="/cart">
-          <ShoppingCart />
-        </Link>
+        <CartIcon />
         <div className="md:hidden">
           <div className="flex items-center">
             <DropdownMenu>

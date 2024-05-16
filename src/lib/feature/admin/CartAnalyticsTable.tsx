@@ -30,7 +30,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import Image from "next/image";
-import { Badge } from "@/components/ui/badge";
+import Chart from "react-apexcharts";
 
 import { useQuery } from "@tanstack/react-query";
 import AddProductModal from "./AddProductModal";
@@ -70,7 +70,7 @@ export const CartAnalyticsTable = () => {
     cartDataArray?.forEach((item: CartItem) => {
       const productId = item.productId;
       productCountMap[productId as unknown as keyof typeof productCountMap] =
-        (productCountMap[productId] || 0) + 1;
+        (productCountMap[productId] || 0) + (item.quantity ?? 1);
     });
 
     // Now, let's create the desired output array
@@ -99,15 +99,12 @@ export const CartAnalyticsTable = () => {
 
   return (
     <main className="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8">
-      <Tabs defaultValue="all">
+      <Tabs defaultValue="table">
         <div className="flex items-center">
           <TabsList>
-            <TabsTrigger value="all">All</TabsTrigger>
-            <TabsTrigger value="active">Active</TabsTrigger>
-            <TabsTrigger value="draft">Draft</TabsTrigger>
-            <TabsTrigger value="archived" className="hidden sm:flex">
-              Archived
-            </TabsTrigger>
+            <TabsTrigger value="table">Table</TabsTrigger>
+            <TabsTrigger value="bar">Bar Graph</TabsTrigger>
+            <TabsTrigger value="pie">Pie Chart</TabsTrigger>
           </TabsList>
           <div className="ml-auto flex items-center gap-2">
             <DropdownMenu>
@@ -137,7 +134,7 @@ export const CartAnalyticsTable = () => {
             </Button>
           </div>
         </div>
-        <TabsContent value="all">
+        <TabsContent value="table">
           <Card>
             <CardHeader>
               <CardTitle>Cart count</CardTitle>
@@ -187,7 +184,75 @@ export const CartAnalyticsTable = () => {
             </CardFooter>
           </Card>
         </TabsContent>
+        <TabsContent value="bar">
+          <Card>
+            <ApexChart data={tableData} />
+          </Card>
+        </TabsContent>
+        <TabsContent value="pie">
+          <Card>
+            <div className="max-w-screen-lg">
+              <PieChart data={tableData} />
+            </div>
+          </Card>
+        </TabsContent>
       </Tabs>
     </main>
   );
+};
+
+const ApexChart = ({ data }: { data: TableData[] }) => {
+  const options = {
+    xaxis: {
+      categories: data?.map((d) => d.product?.name),
+    },
+  };
+  const series = [
+    {
+      name: "series-1",
+      data: data?.map((d) => d.count),
+    },
+  ];
+
+  return <Chart options={options} series={series} type="bar" />;
+};
+
+const PieChart = ({ data }: { data: TableData[] }) => {
+  const formula = data?.reduce((obj, curr) => {
+    return {
+      [curr.productId]: {
+        name: curr.product.name,
+        data: [...(obj?.[curr.productId]?.data ?? []), curr.count],
+      },
+      ...(obj ?? {}),
+    };
+  }, {});
+
+  console.log("formula", formula);
+  const options = {
+    xaxis: {
+      categories: data?.map((d) => d.product?.name),
+    },
+    chart: {
+      width: 50,
+      type: "pie",
+    },
+    labels: data?.map((d) => d.product?.name),
+    responsive: [
+      {
+        breakpoint: 480,
+        options: {
+          chart: {
+            width: 50,
+          },
+          legend: {
+            position: "bottom",
+          },
+        },
+      },
+    ],
+  };
+  const series = data?.map((d) => d.count);
+
+  return <Chart options={options} series={series} type="pie" />;
 };
