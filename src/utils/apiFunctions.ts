@@ -1,25 +1,25 @@
 import axios from "axios";
 
 export interface ProductData {
-    id: number;
-    name: string;
-    description: string;
-    createdAt: string;
-    price: number;
-    totalSales: number;
-    isActive: boolean;
-    images: string[];
+  id: number;
+  name: string;
+  description: string;
+  createdAt: string;
+  price: number;
+  totalSales: number;
+  isActive: boolean;
+  images: string[];
 }
 
 export interface ProductAddData {
-  name: string; 
-  description: string; 
-  price: string; 
-  images: string[]
+  name: string;
+  description: string;
+  price: string;
+  images: string[];
 }
 
-export interface ProductView{
-  productId: number
+export interface ProductView {
+  productId: number;
 }
 
 export interface AddCartData {
@@ -27,11 +27,10 @@ export interface AddCartData {
   quantity: number;
 }
 
-
-// product 
+// product
 export const getProducts = async () => {
-    const res = await axios.get("/api/product");
-    return res;
+  const res = await axios.get("/api/product");
+  return res;
 };
 
 export const getProduct = async (id: number) => {
@@ -44,16 +43,17 @@ export const addProduct = async (data: ProductAddData) => {
   return res;
 };
 
-export const updateProduct = async (data: ProductAddData & {productId: number}) => {
+export const updateProduct = async (
+  data: ProductAddData & { productId: number }
+) => {
   const res = await axios.put(`/api/product`, data);
   return res;
 };
 
-export const deleteProduct = async (data: {productId: number}) => {
-  const res = await axios.delete(`/api/product`, {data});
+export const deleteProduct = async (data: { productId: number }) => {
+  const res = await axios.delete(`/api/product`, { data });
   return res;
 };
-
 
 // product view
 
@@ -67,14 +67,12 @@ export const getProductView = async () => {
   return res;
 };
 
-
 // cart
 
 export const addToCart = async (data: AddCartData) => {
   const res = await axios.post(`/api/cart`, data);
   return res;
 };
-
 
 export const getUserCart = async () => {
   const res = await axios.get(`/api/cart?type=user`);
@@ -86,3 +84,7 @@ export const getAllCart = async () => {
   return res;
 };
 
+export const deleteCart = async (data: { cartId: number }) => {
+  const res = await axios.delete(`/api/cart`, { data });
+  return res;
+};

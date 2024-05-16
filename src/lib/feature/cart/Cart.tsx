@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import Stripe from "stripe";
+import { deleteCart } from "@/utils/apiFunctions";
 
 export const Cart = () => {
   const [total, setTotal] = useState(0);
@@ -27,10 +28,6 @@ export const Cart = () => {
     );
     setTotal(total);
   }, [JSON.stringify(data)]);
-
-  if (isLoading) {
-    return <>Loading...</>;
-  }
 
   const handleCart = async () => {
     // step 1: load stripe
@@ -70,7 +67,7 @@ export const Cart = () => {
           (item: CartItem & { productItem: Product }) => (
             <div
               key={item?.id}
-              className="flex justify-between text-left gap-8"
+              className="flex justify-between text-left gap-8 items-center"
             >
               <Image
                 src={item?.productItem?.images?.[0]}
@@ -81,6 +78,13 @@ export const Cart = () => {
               <p>{item?.productItem?.name}</p>
               <p>{item?.quantity}</p>
               <p>${item?.productItem?.price}</p>
+              <button
+                onClick={() => {
+                  deleteCart({ cartId: item.id });
+                }}
+              >
+                x
+              </button>
             </div>
           )
         )}

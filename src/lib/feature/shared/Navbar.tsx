@@ -6,6 +6,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
@@ -16,7 +17,7 @@ export const Navbar = async () => {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex w-full gap-4">
+      <div className="flex w-full gap-4 items-center">
         <div className="flex flex-1 justify-center items-center">
           <Link href="/">
             <Image
@@ -59,7 +60,17 @@ export const Navbar = async () => {
             </DropdownMenu>
           </div>
         </div>
-        {session?.user ? <SignoutButton /> : <Link href="/login">Sign In</Link>}
+        {session?.user ? (
+          <Link href="/admin">
+            <Avatar>
+              <AvatarImage src="https://github.com/shadcn.png" />
+              <AvatarFallback>CN</AvatarFallback>
+            </Avatar>
+            {/* <SignoutButton /> */}
+          </Link>
+        ) : (
+          <Link href="/login">Sign In</Link>
+        )}
       </div>
       <div className="flex justify-center">
         <div className="flex gap-20 items-center">
