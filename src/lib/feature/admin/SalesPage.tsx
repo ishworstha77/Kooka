@@ -54,7 +54,6 @@ export const SalesPage = () => {
     queryFn: getSales,
   });
 
-  console.log("data", data);
   if (isLoading) {
     return <>Loading ...</>;
   }
@@ -167,13 +166,13 @@ export const SalesPage = () => {
         </TabsContent>
         <TabsContent value="bar">
           <Card>
-            <ApexChart />
+            <ApexChart data={data.data} />
           </Card>
         </TabsContent>
         <TabsContent value="pie">
           <Card>
             <div className="max-w-screen-lg">
-              <PieChart />
+              <PieChart data={data.data} />
             </div>
           </Card>
         </TabsContent>
@@ -182,64 +181,62 @@ export const SalesPage = () => {
   );
 };
 
-const ApexChart = () => {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["getProductsView"],
-    queryFn: getProductView,
-  });
-
-  const formula = data?.data?.reduce((obj, curr) => {
+const ApexChart = ({
+  data,
+}: {
+  data: Array<Sales & { productItem: Product; user: User }>;
+}) => {
+  const groupedData = data.reduce((obj, curr) => {
     return {
-      [curr.product?.id]: {
-        name: curr.product.name,
-        data: [...(obj?.[curr.product?.id]?.data ?? []), curr.noOfViews],
+      ...obj,
+      [curr.productId]: {
+        name: curr.productItem?.name,
+        quantity: obj[curr.productId]?.quantity ?? 0 + curr.quantity,
       },
-      ...(obj ?? {}),
     };
   }, {});
-
-  console.log("formula", formula);
+  const groupedArr = Object.values(groupedData);
   const options = {
     xaxis: {
-      categories: data.data?.map((d) => d.product?.name),
+      categories: groupedArr?.map((d) => d.name),
     },
   };
   const series = [
     {
       name: "series-1",
-      data: data.data?.map((d) => d.noOfViews),
+      data: groupedArr?.map((d) => d.quantity),
     },
   ];
 
   return <Chart options={options} series={series} type="bar" />;
 };
 
-const PieChart = () => {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["getProductsView"],
-    queryFn: getProductView,
-  });
-
-  const formula = data?.data?.reduce((obj, curr) => {
+const PieChart = ({
+  data,
+}: {
+  data: Array<Sales & { productItem: Product; user: User }>;
+}) => {
+  const groupedData = data.reduce((obj, curr) => {
     return {
-      [curr.product?.id]: {
-        name: curr.product.name,
-        data: [...(obj?.[curr.product?.id]?.data ?? []), curr.noOfViews],
+      ...obj,
+      [curr.productId]: {
+        name: curr.productItem?.name,
+        quantity: obj[curr.productId]?.quantity ?? 0 + curr.quantity,
       },
-      ...(obj ?? {}),
     };
   }, {});
 
-  console.log("formula", formula);
+  const groupedArr = Object.values(groupedData);
+
   const options = {
     xaxis: {
-      categories: data.data?.map((d) => d.product?.name),
+      categories: groupedArr?.map((d) => d?.name),
     },
     chart: {
       width: 50,
       type: "pie",
     },
-    labels: data?.data?.map((d) => d.product?.name),
+    labels: groupedArr?.map((d) => d?.name),
     responsive: [
       {
         breakpoint: 480,
@@ -254,7 +251,9 @@ const PieChart = () => {
       },
     ],
   };
-  const series = data.data?.map((d) => d.noOfViews);
+  const series = groupedArr?.map((d) => d.quantity);
+
+  // return <div>fuck you</div>;
 
   return <Chart options={options} series={series} type="pie" />;
 };
