@@ -68,7 +68,7 @@ export const DashboardTable = () => {
       queryClient.invalidateQueries({ queryKey: ["getProducts"] });
       // Perform actions upon successful mutation
       toast({
-        title: "Error",
+        title: "Success",
         description: "product deleted successfully",
       });
     },
