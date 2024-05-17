@@ -29,7 +29,6 @@ export const authOptions: NextAuthOptions = {
         const existingUser = await prisma?.user?.findUnique({
           where: { email: credentials?.email },
         });
-        console.log("existingUser", existingUser);
 
         if (!existingUser) {
           return null;
@@ -69,11 +68,14 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      console.log("session", session);
+      const existingUser = await prisma?.user?.findUnique({
+        where: { email: session?.user?.email },
+      });
       return {
         ...session,
         user: {
           ...session?.user,
+          ...existingUser,
           id: token?.id,
         },
       };

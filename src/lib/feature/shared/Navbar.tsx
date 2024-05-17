@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Menu, ShoppingCart } from "lucide-react";
+import { Menu } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,8 +11,8 @@ import Link from "next/link";
 import { authOptions } from "@/lib/auth";
 import { getServerSession } from "next-auth";
 import { SignoutButton } from "./SignoutButton";
-import { getUserCart } from "@/utils/apiFunctions";
 import CartIcon from "./CartIcon";
+
 export const Navbar = async () => {
   const session = await getServerSession(authOptions);
 
@@ -59,14 +59,18 @@ export const Navbar = async () => {
             </DropdownMenu>
           </div>
         </div>
+
         {session?.user ? (
-          <Link href="/admin">
-            <Avatar>
-              <AvatarImage src="https://github.com/shadcn.png" />
-              <AvatarFallback>CN</AvatarFallback>
-            </Avatar>
-            {/* <SignoutButton /> */}
-          </Link>
+          session?.user?.role === "admin" ? (
+            <Link href="/admin">
+              <Avatar>
+                <AvatarImage src="https://github.com/shadcn.png" />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
+            </Link>
+          ) : (
+            <SignoutButton />
+          )
         ) : (
           <Link href="/login">Sign In</Link>
         )}
