@@ -69,7 +69,7 @@ export const DashboardTable = () => {
       // Perform actions upon successful mutation
       toast({
         title: "Success",
-        description: "product deleted successfully",
+        description: "Product deleted successfully",
       });
     },
     onError: (error: { response: { data: { message: string } } }) => {
