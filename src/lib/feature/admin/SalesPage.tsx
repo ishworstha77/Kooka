@@ -196,7 +196,6 @@ const ApexChart = ({
     };
   }, {});
 
-  console.log("groupedData", groupedData);
   const groupedArr = Object.values(groupedData);
   const options = {
     xaxis: {
@@ -223,7 +222,7 @@ const PieChart = ({
       ...obj,
       [curr.productId]: {
         name: curr.productItem?.name,
-        quantity: obj[curr.productId]?.quantity ?? 0 + curr.quantity,
+        quantity: (obj[curr.productId]?.quantity ?? 0) + curr.quantity,
       },
     };
   }, {});
